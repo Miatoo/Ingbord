@@ -13,6 +13,36 @@ import { useTranslation } from '../../../i18n/useTranslation';
 import { compressImageUnderMaxBytes, cropToSafeFrame } from '../../../utils/imageUtils';
 import { createId } from '../../../utils/id';
 
+/** 多参考图说明：与 urls/parts 顺序一致，一次生图一张成图 */
+function buildMultiRefPrompt(
+  userPrompt: string,
+  roleCount: number,
+  sceneCount: number,
+  negativePrompt?: string
+): string {
+  const parts = [
+    '请严格参考第1张参考图（分镜草图）的构图、景别、镜头角度、角色姿态与画面比例进行生图。',
+  ];
+  let refIdx = 2;
+  for (let i = 0; i < roleCount; i++) {
+    parts.push(
+      `请使用第${refIdx}张参考图的角色外观（服装、发型、五官特征须一致）。`
+    );
+    refIdx += 1;
+  }
+  for (let i = 0; i < sceneCount; i++) {
+    parts.push(
+      `请使用第${refIdx}张参考图的场景内容，并转换为与整体一致的风格。`
+    );
+    refIdx += 1;
+  }
+  parts.push(userPrompt.trim());
+  if (negativePrompt?.trim()) {
+    parts.push(`Negative: ${negativePrompt.trim()}`);
+  }
+  return parts.filter(Boolean).join('\n');
+}
+
 export function AIImageView() {
   const { t } = useTranslation();
   const project = useProjectStore((state) => state.project);
@@ -119,22 +149,26 @@ export function AIImageView() {
 
     try {
       setGenerationProgress(10);
+      const roleSrcList = roleImages.filter(Boolean).slice(0, 3);
+      const sceneSrcList = sceneImages.filter(Boolean).slice(0, 3);
       const [shotForGen, ...restCompressed] = await Promise.all([
         compressImageUnderMaxBytes(latestShotImage),
-        ...roleImages.slice(0, 3).map((img) => compressImageUnderMaxBytes(img)),
-        ...sceneImages.slice(0, 3).map((img) => compressImageUnderMaxBytes(img)),
+        ...roleSrcList.map((img) => compressImageUnderMaxBytes(img)),
+        ...sceneSrcList.map((img) => compressImageUnderMaxBytes(img)),
       ]);
-      const roleForGenList = restCompressed.slice(0, roleImages.length).filter(Boolean);
-      const sceneForGenList = restCompressed.slice(roleImages.length).filter(Boolean);
-      const roleForGen = roleForGenList[0] || '';
-      const sceneForGen = sceneForGenList[0] || '';
+      const roleForGenList = restCompressed.slice(0, roleSrcList.length).filter(Boolean);
+      const sceneForGenList = restCompressed.slice(roleSrcList.length).filter(Boolean);
+      const fullPrompt = buildMultiRefPrompt(
+        prompt,
+        roleForGenList.length,
+        sceneForGenList.length,
+        negativePrompt
+      );
 
       const result = await generateAIImage({
-        prompt: prompt.trim(),
+        prompt: fullPrompt,
         negativePrompt: negativePrompt.trim() || undefined,
         storyboardImage: shotForGen,
-        roleImage: roleForGen || undefined,
-        sceneImage: sceneForGen || undefined,
         roleImages: roleForGenList.length ? roleForGenList : undefined,
         sceneImages: sceneForGenList.length ? sceneForGenList : undefined,
         aspectRatio: project?.aspectRatio || '16:9',
@@ -255,6 +289,12 @@ export function AIImageView() {
       const sceneCompressed = await Promise.all(
         sceneImages.filter(Boolean).slice(0, 3).map((img) => compressImageUnderMaxBytes(img))
       );
+      const batchPrompt = buildMultiRefPrompt(
+        prompt,
+        roleCompressed.length,
+        sceneCompressed.length,
+        negativePrompt
+      );
 
       for (let i = 0; i < shotsWithImage.length; i++) {
         const shot = shotsWithImage[i];
@@ -263,11 +303,9 @@ export function AIImageView() {
         const shotForGen = await compressImageUnderMaxBytes(shotImg);
 
         const result = await generateAIImage({
-          prompt: prompt.trim(),
+          prompt: batchPrompt,
           negativePrompt: negativePrompt.trim() || undefined,
           storyboardImage: shotForGen,
-          roleImage: roleCompressed[0],
-          sceneImage: sceneCompressed[0],
           roleImages: roleCompressed.length ? roleCompressed : undefined,
           sceneImages: sceneCompressed.length ? sceneCompressed : undefined,
           aspectRatio: project.aspectRatio || '16:9',

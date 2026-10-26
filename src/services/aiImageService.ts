@@ -281,6 +281,7 @@ export async function generateAIImage(
     ...(params.sceneImage ? [params.sceneImage] : []),
   ].filter(Boolean);
 
+  // 多参考图合并进同一次生图请求（一张成图），不按参考图拆任务
   const roleBase64List: string[] = [];
   for (const src of roleSources.slice(0, 3)) {
     const b64 = await convertToBase64(src);
@@ -291,10 +292,19 @@ export async function generateAIImage(
     const b64 = await convertToBase64(src);
     if (b64 && b64.length >= 100) sceneBase64List.push(b64);
   }
-  const roleBase64 = roleBase64List[0];
-  const sceneBase64 = sceneBase64List[0];
-  
+  const imageTypeLabels = [
+    '分镜草图（当前镜头）',
+    ...roleBase64List.map((_, i) =>
+      roleBase64List.length > 1 ? `参考角色图 ${i + 1}` : '参考角色图'
+    ),
+    ...sceneBase64List.map((_, i) =>
+      sceneBase64List.length > 1 ? `参考场景图 ${i + 1}` : '参考场景图'
+    ),
+  ];
+
   console.log('========== 图片转换完成 ==========');
+  console.log('角色参考数量:', roleBase64List.length);
+  console.log('场景参考数量:', sceneBase64List.length);
   
   let requestBody: any;
   let apiUrl: URL;
@@ -371,75 +381,62 @@ export async function generateAIImage(
     console.log('  - base64长度:', storyboardData.data.length);
     console.log('  - base64预览:', storyboardData.data.substring(0, 50) + '...');
     
-    // 添加参考角色图（第2张图片，如果提供）
-    if (roleBase64) {
-      console.log('【第2张图片】参考角色图（角色参考图）');
-      console.log('  - 位置: parts[2].inline_data');
-      console.log('  - 用途: 这是角色的参考图片，AI需要参考这张图中角色的风格特征、服装、外观等');
-      console.log('  - 原始base64长度:', roleBase64.length);
-      const roleData = extractBase64(roleBase64);
-      console.log('  - 提取后数据长度:', roleData.data?.length || 0);
-      if (roleData && roleData.data && roleData.data.length >= 100) {
+    // 追加全部角色 / 场景参考（同一 contents，一次生成）
+    for (let i = 0; i < roleBase64List.length; i++) {
+      const label = imageTypeLabels[1 + i] || `参考角色图 ${i + 1}`;
+      console.log(`【第${parts.length}张图片】${label}`);
+      const roleData = extractBase64(roleBase64List[i]);
+      if (roleData?.data && roleData.data.length >= 100) {
         parts.push({
           inline_data: {
             mime_type: roleData.mimeType,
-            data: roleData.data
-          }
+            data: roleData.data,
+          },
         });
-        console.log('  ✓ 已成功添加到 parts[2]');
-        console.log('  - MIME类型:', roleData.mimeType);
-        console.log('  - base64长度:', roleData.data.length);
-        console.log('  - base64预览:', roleData.data.substring(0, 50) + '...');
+        console.log(`  ✓ 已添加到 parts[${parts.length - 1}]`);
       } else {
-        console.warn('  ⚠ 警告：参考角色图数据不完整，跳过');
-        console.warn('  - 数据长度:', roleData.data?.length || 0);
+        console.warn(`  ⚠ ${label} 数据不完整，跳过`);
       }
-    } else {
-      console.log('【第2张图片】参考角色图 - 未提供（跳过）');
     }
-    
-    // 添加参考场景图（第3张图片，如果提供）
-    if (sceneBase64) {
-      console.log('【第3张图片】参考场景图（场景参考图）');
-      console.log('  - 位置: parts[' + (parts.length) + '].inline_data');
-      console.log('  - 用途: 这是场景的参考图片，AI需要参考这张图中的场景环境、背景、氛围等');
-      console.log('  - 原始base64长度:', sceneBase64.length);
-      const sceneData = extractBase64(sceneBase64);
-      console.log('  - 提取后数据长度:', sceneData.data?.length || 0);
-      if (sceneData && sceneData.data && sceneData.data.length >= 100) {
+    if (!roleBase64List.length) {
+      console.log('参考角色图 - 未提供（跳过）');
+    }
+
+    for (let i = 0; i < sceneBase64List.length; i++) {
+      const label =
+        imageTypeLabels[1 + roleBase64List.length + i] || `参考场景图 ${i + 1}`;
+      console.log(`【第${parts.length}张图片】${label}`);
+      const sceneData = extractBase64(sceneBase64List[i]);
+      if (sceneData?.data && sceneData.data.length >= 100) {
         parts.push({
           inline_data: {
             mime_type: sceneData.mimeType,
-            data: sceneData.data
-          }
+            data: sceneData.data,
+          },
         });
-        console.log('  ✓ 已成功添加到 parts[' + (parts.length - 1) + ']');
-        console.log('  - MIME类型:', sceneData.mimeType);
-        console.log('  - base64长度:', sceneData.data.length);
-        console.log('  - base64预览:', sceneData.data.substring(0, 50) + '...');
+        console.log(`  ✓ 已添加到 parts[${parts.length - 1}]`);
       } else {
-        console.warn('  ⚠ 警告：参考场景图数据不完整，跳过');
-        console.warn('  - 数据长度:', sceneData.data?.length || 0);
+        console.warn(`  ⚠ ${label} 数据不完整，跳过`);
       }
-    } else {
-      console.log('【第3张图片】参考场景图 - 未提供（跳过）');
     }
-    
+    if (!sceneBase64List.length) {
+      console.log('参考场景图 - 未提供（跳过）');
+    }
+
     console.log('========== Gemini API parts 数组构建完成 ==========');
     console.log('总parts数量:', parts.length);
     console.log('图片顺序说明:');
-    const geminiImageTypeNames = ['分镜草图（当前镜头）', '参考角色图', '参考场景图'];
     parts.forEach((part, index) => {
       if (index === 0) {
         console.log(`  parts[${index}]: 用户提示词（text）`);
       } else if (part.inline_data) {
-        const imageIndex = index - 1;
-        console.log(`  parts[${index}]: ${geminiImageTypeNames[imageIndex] || '未知类型'}（inline_data）`);
+        console.log(
+          `  parts[${index}]: ${imageTypeLabels[index - 1] || '未知类型'}（inline_data）`
+        );
       }
     });
-    
-    // 输出parts数组信息
-    const imagePartsCount = parts.filter(p => p.inline_data).length;
+
+    const imagePartsCount = parts.filter((p) => p.inline_data).length;
     console.log('========== Gemini API 最终请求参数 ==========');
     console.log('总parts数量:', parts.length);
     console.log('图片parts数量:', imagePartsCount);
@@ -449,12 +446,11 @@ export async function generateAIImage(
         console.log(`  parts[${i}]: 用户提示词（text）`);
         console.log(`    - 内容预览: ${p.text.substring(0, 100)}...`);
       } else if (p.inline_data) {
-        const imageIndex = i - 1;
-        const imageType = geminiImageTypeNames[imageIndex] || `第${imageIndex + 1}张图片（未知类型）`;
+        const imageType =
+          imageTypeLabels[i - 1] || `第${i}张图片（未知类型）`;
         console.log(`  parts[${i}]: ${imageType}（inline_data）`);
         console.log(`    - MIME类型: ${p.inline_data.mime_type}`);
         console.log(`    - base64长度: ${p.inline_data.data?.length || 0}`);
-        console.log(`    - base64预览: ${p.inline_data.data ? p.inline_data.data.substring(0, 50) + '...' : '无'}`);
       }
     });
     
@@ -493,146 +489,69 @@ export async function generateAIImage(
       preview: storyboardPureBase64.substring(0, 50) + '...'
     });
     
-    // 根据Nano Banana API文档格式构建请求体
-    // 参考：https://grsai.com/zh/dashboard/documents/nano-banana
-    // 
-    // 图片通过 urls 数组传递，顺序如下：
-    // - urls[0]: 第1张图片（分镜草图，必填）
-    // - urls[1]: 第2张图片（参考角色图，可选）
-    // - urls[2]: 第3张图片（参考场景图，可选）
-    //
-    // 注意：不自动修改用户输入的prompt，图片顺序通过 urls 数组位置来标识
-    
-    // 构建 urls 数组，按顺序添加图片
+    // Nano Banana：一次请求 urls = [分镜, ...角色参考, ...场景参考]，生成一张图
+    // 文档：https://grsai.com/zh/dashboard/documents/nano-banana
     const urls: string[] = [];
-    
-    console.log('========== 开始构建图片数组 ==========');
-    
-    // 第1张图片：分镜草图（必填）
+
+    console.log('========== 开始构建图片数组（单次任务多参考） ==========');
+
     urls.push(storyboardPureBase64);
-    console.log('【第1张图片】分镜草图（当前镜头的分镜图）');
-    console.log('  - 位置: urls[0]');
-    console.log('  - 用途: 这是当前要生成最终分镜图的分镜草图，AI需要参考这张图的构图、景别、镜头角度、动作姿态和画面比例');
-    console.log('  - base64长度:', storyboardPureBase64.length);
-    console.log('  - base64预览:', storyboardPureBase64.substring(0, 50) + '...');
-    
-    // 第2张图片：参考角色图（可选）
-    if (roleBase64) {
-      console.log('【第2张图片】参考角色图（角色参考图）');
-      console.log('  - 位置: urls[1]');
-      console.log('  - 用途: 这是角色的参考图片，AI需要参考这张图中角色的风格特征、服装、外观等');
-      console.log('  - 原始base64长度:', roleBase64.length);
-      const rolePureBase64 = extractPureBase64(roleBase64);
-      console.log('  - 提取纯base64后长度:', rolePureBase64.length);
+    console.log('【urls[0]】分镜草图 base64长度:', storyboardPureBase64.length);
+
+    for (let i = 0; i < roleBase64List.length; i++) {
+      const rolePureBase64 = extractPureBase64(roleBase64List[i]);
       if (rolePureBase64 && rolePureBase64.length >= 100) {
         urls.push(rolePureBase64);
-        console.log('  ✓ 已成功添加到 urls[1]');
-        console.log('  - base64预览:', rolePureBase64.substring(0, 50) + '...');
+        console.log(`【urls[${urls.length - 1}]】${imageTypeLabels[urls.length - 1]} 已添加`);
       } else {
-        console.warn('  ⚠ 警告：参考角色图数据不完整，跳过');
-        console.warn('  - 提取后的长度:', rolePureBase64?.length);
+        console.warn(`  ⚠ 角色参考 ${i + 1} 数据不完整，跳过`);
       }
-    } else {
-      console.log('【第2张图片】参考角色图 - 未提供（跳过）');
     }
-    
-    // 第3张图片：参考场景图（可选）
-    if (sceneBase64) {
-      console.log('【第3张图片】参考场景图（场景参考图）');
-      console.log('  - 位置: urls[2]');
-      console.log('  - 用途: 这是场景的参考图片，AI需要参考这张图中的场景环境、背景、氛围等');
-      console.log('  - 原始base64长度:', sceneBase64.length);
-      const scenePureBase64 = extractPureBase64(sceneBase64);
-      console.log('  - 提取纯base64后长度:', scenePureBase64.length);
+
+    for (let i = 0; i < sceneBase64List.length; i++) {
+      const scenePureBase64 = extractPureBase64(sceneBase64List[i]);
       if (scenePureBase64 && scenePureBase64.length >= 100) {
         urls.push(scenePureBase64);
-        console.log('  ✓ 已成功添加到 urls[2]');
-        console.log('  - base64预览:', scenePureBase64.substring(0, 50) + '...');
+        console.log(`【urls[${urls.length - 1}]】${imageTypeLabels[urls.length - 1]} 已添加`);
       } else {
-        console.warn('  ⚠ 警告：参考场景图数据不完整，跳过');
-        console.warn('  - 提取后的长度:', scenePureBase64?.length);
+        console.warn(`  ⚠ 场景参考 ${i + 1} 数据不完整，跳过`);
       }
-    } else {
-      console.log('【第3张图片】参考场景图 - 未提供（跳过）');
     }
-    
+
     console.log('========== 图片数组构建完成 ==========');
-    console.log('总图片数量:', urls.length);
-    console.log('图片顺序说明:');
-    const nanoImageTypeNames1 = ['分镜草图（当前镜头）', '参考角色图', '参考场景图'];
+    console.log('总图片数量（单任务）:', urls.length);
     urls.forEach((_url, index) => {
-      console.log(`  urls[${index}]: ${nanoImageTypeNames1[index] || '未知'}`);
+      console.log(`  urls[${index}]: ${imageTypeLabels[index] || `参考图${index + 1}`}`);
     });
-    
-    // 根据正确的请求格式，如果只有一张图片，urls 应该是 ["base64"]
-    // 如果有多张图片，urls 应该是 ["base641", "base642", ...]
-    // 但根据用户提供的正确示例，urls 应该是 ["base64"] 格式
-    // 如果有多张图片，可能需要使用不同的字段，或者 urls 数组包含所有图片
-    
+
     requestBody = {
       model: config.modelName || 'nano-banana',
-      prompt: params.prompt, // 使用用户原始输入的提示词，不添加额外说明
-      imageSize: `${width}x${height}`, // 图片尺寸
-      aspectRatio: aspectRatio, // 画幅比例（使用项目设置的比例）
-      webhook: aspectRatio === 'auto' ? '-1' : '', // Webhook回调地址（可选），如果 aspectRatio 是 auto，设置为 '-1'
-      shutProgress: false, // 是否关闭进度推送
-      urls: urls.length > 0 ? urls : ['base64'], // 图片数组，按顺序：分镜草图、参考角色图、参考场景图
+      prompt: params.prompt,
+      imageSize: `${width}x${height}`,
+      aspectRatio: aspectRatio,
+      // 与托管通道一致：webHook=-1 走轮询拿结果，避免流式拆成多次提交观感
+      webhook: '-1',
+      webHook: '-1',
+      shutProgress: true,
+      urls, // 多参考合并进同一 urls，一次生图任务
     };
-    
-    console.log('========== Nano Banana API urls 数组详细信息 ==========');
-    console.log('urls 数组长度:', urls.length);
-    const nanoImageTypeNames2 = ['分镜草图（当前镜头）', '参考角色图', '参考场景图'];
-    urls.forEach((url, index) => {
-      console.log(`  urls[${index}]: ${nanoImageTypeNames2[index] || '未知类型'}`);
-      console.log(`    - base64长度: ${url.length}`);
-      console.log(`    - base64预览: ${url.substring(0, 50)}...`);
-    });
-    
-    // 负面提示词
+
     if (params.negativePrompt && params.negativePrompt.trim()) {
-      requestBody.negativePrompt = params.negativePrompt; // 使用驼峰命名
-      console.log('✓ 负面提示词已添加到Nano Banana API请求中');
-      console.log('  - 负面提示词内容:', params.negativePrompt);
-    } else {
-      console.log('未提供负面提示词');
+      requestBody.negativePrompt = params.negativePrompt;
+      console.log('✓ 负面提示词已添加');
     }
-    
-    // 调试：记录请求体信息（不包含完整图片数据，只记录长度）
+
     console.log('========== Nano Banana API 最终请求参数 ==========');
     console.log('模型:', requestBody.model);
     console.log('提示词长度:', requestBody.prompt.length);
-    console.log('提示词内容:', requestBody.prompt.substring(0, 300) + (requestBody.prompt.length > 300 ? '...' : ''));
     console.log('图片尺寸:', requestBody.imageSize);
     console.log('画幅比例:', requestBody.aspectRatio);
-    console.log('Webhook:', requestBody.webhook);
-    console.log('urls 数组（图片列表）:');
-    console.log('  - 数组长度:', requestBody.urls.length);
-    const nanoImageTypeNames3 = ['分镜草图（当前镜头）', '参考角色图', '参考场景图'];
+    console.log('urls 数量（单任务多参考）:', requestBody.urls.length);
     requestBody.urls.forEach((url: string, index: number) => {
-      const imageType = nanoImageTypeNames3[index] || `第${index + 1}张图片（未知类型）`;
-      console.log(`  - urls[${index}]: ${imageType}`);
-      console.log(`    - 是否有数据: ${!!url}`);
-      console.log(`    - base64长度: ${url?.length || 0}`);
-      console.log(`    - base64预览: ${url ? url.substring(0, 50) + '...' : '无'}`);
+      console.log(
+        `  urls[${index}]: ${imageTypeLabels[index] || `图${index + 1}`} len=${url?.length || 0}`
+      );
     });
-    
-    // 验证请求体中的图片数据
-    console.log('✓ 请求体中包含的图片数量:', requestBody.urls.length);
-    
-    // 输出完整的请求体结构（用于调试，但不输出完整base64数据）
-    console.log('========== 完整请求体结构 ==========');
-    const requestBodyForLog = {
-      model: requestBody.model,
-      prompt: requestBody.prompt.substring(0, 200) + '...',
-      urls: requestBody.urls.map((url: string, index: number) => 
-        `[base64数据${index + 1}，长度: ${url.length}]`
-      ),
-      imageSize: requestBody.imageSize,
-      aspectRatio: requestBody.aspectRatio,
-      webhook: requestBody.webhook,
-      shutProgress: requestBody.shutProgress,
-    };
-    console.log(JSON.stringify(requestBodyForLog, null, 2));
     
     headers = {
       'Content-Type': 'application/json',
@@ -655,14 +574,21 @@ export async function generateAIImage(
       size: `${width}x${height}`,
     };
     
-    // 添加参考图片（使用前面已转换的变量）
-    if (roleBase64 && roleBase64.length >= 100) {
-      requestBody.reference_image = roleBase64;
-      if (roleBase64List.length > 1) requestBody.reference_images = roleBase64List;
+    // 多参考合并进同一请求（不拆成多次生成）
+    if (roleBase64List.length) {
+      requestBody.reference_image = roleBase64List[0];
+      requestBody.reference_images = roleBase64List;
     }
-    if (sceneBase64 && sceneBase64.length >= 100) {
-      requestBody.scene_image = sceneBase64;
-      if (sceneBase64List.length > 1) requestBody.scene_images = sceneBase64List;
+    if (sceneBase64List.length) {
+      requestBody.scene_image = sceneBase64List[0];
+      requestBody.scene_images = sceneBase64List;
+    }
+    if (roleBase64List.length || sceneBase64List.length) {
+      requestBody.urls = [
+        storyboardBase64,
+        ...roleBase64List,
+        ...sceneBase64List,
+      ];
     }
     // 负面提示词
     if (params.negativePrompt && params.negativePrompt.trim()) {
@@ -685,11 +611,17 @@ export async function generateAIImage(
   
   let retryCount = 0;
   const maxRetries = 3;
-  
+  // 一旦上游已创建生图任务，禁止整单重试（否则多参考会被拆成多个计费任务）
+  let upstreamTaskSubmitted = false;
+
   while (retryCount < maxRetries) {
     try {
       if (params.onProgress) {
         params.onProgress(30 + retryCount * 10);
+      }
+
+      if (upstreamTaskSubmitted) {
+        throw new Error('生图任务已提交，请勿重复请求；请稍后查询结果或重新发起一次生成');
       }
       
       const response = await fetch(apiUrl.toString(), {
@@ -736,6 +668,11 @@ export async function generateAIImage(
         }
         
         throw new Error(`API调用失败: ${errorMessage}`);
+      }
+
+      // Draw 类接口：HTTP 200 即表示上游已建任务，后续失败只能查结果，不可再 POST 生图
+      if (isNanoBananaAPI) {
+        upstreamTaskSubmitted = true;
       }
       
       // 处理 SSE (Server-Sent Events) 流式响应或标准 JSON 响应
@@ -862,9 +799,12 @@ export async function generateAIImage(
           throw new Error(friendlyError);
         }
         
-        if (data.status === 'pending' || data.status === 'processing' || data.status === 'in_progress') {
+        if (data.status === 'pending' || data.status === 'processing' || data.status === 'in_progress' || data.status === 'running') {
           // 任务进行中，尝试轮询获取结果
-          const taskId = data.id || data.task_id || data.job_id;
+          const taskId = data.id || data.task_id || data.job_id || data.data?.id;
+          if (taskId) {
+            upstreamTaskSubmitted = true;
+          }
           if (taskId && isNanoBananaAPI) {
             // Nano Banana API 使用 /v1/draw/result 获取结果
             const resultUrl = new URL(config.apiEndpoint);
@@ -1087,13 +1027,16 @@ export async function generateAIImage(
         model: config.modelName,
       };
     } catch (error: any) {
+      if (upstreamTaskSubmitted) {
+        throw error;
+      }
       retryCount++;
       
       if (retryCount >= maxRetries) {
         throw error;
       }
       
-      // 等待后重试
+      // 仅在尚未成功创建上游任务时重试提交
       await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
     }
   }
