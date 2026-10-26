@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 
+// GitHub Pages project site: https://miatoo.github.io/Ingbord/
+// Use absolute base so assets resolve even without a trailing slash.
+const pagesBase = process.env.VITE_BASE || '/Ingbord/'
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: './',
+  base: pagesBase,
   plugins: [react()],
   server: {
     host: '0.0.0.0',
