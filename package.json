@@ -1,9 +1,9 @@
 {
   "name": "yingge-ingbord-oss",
   "version": "1.0.1-oss",
-  "description": "影格 Ingbord — 开源纯本地分镜与故事板工具（AGPL-3.0）",
+  "description": "Ingbord — local storyboard editor (CC BY-NC-SA 4.0)",
   "author": "Miatoo",
-  "license": "AGPL-3.0-or-later",
+  "license": "CC-BY-NC-SA-4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

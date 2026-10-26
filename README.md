@@ -1,184 +1,185 @@
-# 影格 Ingbord
+# Ingbord
 
-专业分镜 / 故事板编辑工具。
+A professional storyboard / shot-list editor.
 
-**在线试用（Web）：** https://miatoo.github.io/Ingbord/
+**Live demo:** https://miatoo.github.io/Ingbord/
 
-适合短视频与广告分镜、课程脚本、故事板练习、独立创作等。
+English · [中文](README-zh.md)
 
-## 能做什么
+Built for short-form and commercial boards, class scripts, practice boards, and indie production.
 
-| 能力 | 说明 |
+## Features
+
+| Feature | Description |
 |------|------|
-| **分镜板** | 管理多个镜头，上传/更换图片，拖拽排序，总览整场戏 |
-| **3D 姿态** | 用 3D 人偶摆动作与机位，一键生成镜头草图 |
-| **标注绘制** | 在画面上画笔、箭头、形状、文字等，做视觉备注 |
-| **AI 生图** | 配置你的图像接口后，用提示词与参考图生成镜头画面 |
-| **导入导出** | 工程文件（`.clapboard` / JSON）、Excel、CSV、图片 ZIP、PDF |
-| **本地项目库** | 项目保存在浏览器本地，刷新后仍可继续编辑 |
+| **Board** | Manage shots, upload/replace images, drag to reorder, overview the sequence |
+| **3D Pose** | Pose 3D mannequins and cameras, then generate a shot sketch |
+| **Annotation** | Draw brushes, arrows, shapes, and text as visual notes |
+| **AI Image** | Configure your image API, then generate frames from prompts / references |
+| **Import / Export** | Project files (`.clapboard` / JSON), Excel, CSV, image ZIP, PDF |
+| **Local library** | Projects stay in the browser; keep editing after refresh |
 
 ---
 
-## 发行版（Release）
+## Releases
 
-可在仓库 [Releases](https://github.com/Miatoo/Ingbord/releases) 下载安装包。当前状态：
+Download packages from [Releases](https://github.com/Miatoo/Ingbord/releases). Current status:
 
-| 平台 | 状态 |
+| Platform | Status |
 |------|------|
-| **Windows 桌面版** | 待发布 |
-| **Android** | 待发布 |
-| **macOS** | 待后续测试更新 |
-| **iOS** | 待后续测试更新 |
-| **Linux** | 待后续测试更新 |
+| **Windows desktop** | Coming soon |
+| **Android** | Coming soon |
+| **macOS** | Planned |
+| **iOS** | Planned |
+| **Linux** | Planned |
 
-也可按下方说明自行构建 Web 版并静态部署。
+You can also build the web app and host it statically (see below).
 
 ---
 
-## 快速开始
+## Quick start
 
-需要 Node.js 18+（推荐 20 / 22）。
+Requires Node.js 18+ (20 / 22 recommended).
 
-### 本地开发
+### Development
 
 ```bash
 npm install
 npm run dev
 ```
 
-浏览器打开终端提示的地址（默认 `http://localhost:5173`）。
+Open the URL printed in the terminal (default `http://localhost:5173`).
 
-`npm install` 结束后若出现 `vulnerabilities`、`looking for funding`、`allow-scripts` 等提示，一般是**警告而非失败**。看到 `audited … packages` 且能继续执行 `npm run dev` / `npm run build` 即可。不必执行 `npm audit fix --force`（可能改坏依赖版本）。
+Messages like `vulnerabilities`, `looking for funding`, or `allow-scripts` after `npm install` are usually **warnings**, not failures. If you see `audited … packages` and can run `npm run dev` / `npm run build`, you are fine. Avoid `npm audit fix --force` (it can break dependency versions).
 
-### 生产构建 / 静态部署
+### Production build / static hosting
 
 ```bash
 npm install
 npm run build
 ```
 
-将 `dist/` 用 Nginx、宝塔、Cloudflare Pages 等托管即可。详见 [DEPLOY.md](DEPLOY.md)。
+Serve `dist/` with Nginx, Cloudflare Pages, etc. See [DEPLOY.md](DEPLOY.md).
 
 ---
 
-## 界面一览
+## UI overview
 
-打开后先进入**项目库**，可新建项目或打开已有工程。进入编辑器后大致布局为：
+You start in the **project library** (create or open a project). In the editor:
 
-- **顶部**：项目名、返回库、新建/保存、导入导出、教程、属性、语言、主题、设置
-- **左侧**：镜头列表（新建、切换等）
-- **中间**：工作区标签 — **分镜板 / 3D 姿态 / 标注 / AI 生图**
-- **右侧**：当前镜头的属性与导演备注等
-
----
-
-## 从零做完一个分镜（推荐流程）
-
-### 1. 新建项目与镜头
-
-1. 项目库点 **「新建」**，进入编辑器。
-2. 左侧点 **「新建镜头」**，可连续添加多个镜头。
-3. 点击列表中的镜头即可选中。
-
-### 2. 给镜头配图（四选一）
-
-| 视图 | 适合做什么 |
-|------|------------|
-| **分镜板** | 上传电脑里的图片，或总览/拖拽排序 |
-| **3D 姿态** | 摆人偶与机位，点「生成镜头图」 |
-| **标注** | 在已有图上画箭头、写字、涂鸦 |
-| **AI 生图** | 配置图像接口后，用提示词/参考图出图 |
-
-最简单：在 **分镜板** 里对镜头卡片 **上传图片**。
-
-### 3. 写导演备注（推荐）
-
-选中镜头后，在右侧属性里填写景别、机位、时长、导演备注等。导出 PDF 时会带上，方便给团队看。
-
-### 4. 调整顺序
-
-在 **分镜板** 中拖拽镜头卡片即可改顺序，影响导出排列。
-
-### 5. 保存与导出
-
-- **保存项目**：顶部保存 / 另存为（写入本地项目库或工程文件）
-- **导入导出**菜单：
-  - **PDF** — 适合打印或发给客户
-  - **图片 ZIP** — 打包各镜画面
-  - **Excel / CSV** — 表格场记、预算等
-  - **工程文件** — 完整项目备份与迁移
-
-重要项目请定期导出工程文件备份；清浏览器站点数据会导致本地库丢失。
+- **Top:** project name, back to library, new/save, import/export, tutorial, properties, language, theme, settings
+- **Left:** shot list (create, switch, …)
+- **Center:** tabs — **Board / 3D Pose / Annotation / AI Image**
+- **Right:** shot properties and director notes
 
 ---
 
-## 四个工作视图
+## First storyboard (recommended flow)
 
-### 分镜板
+### 1. Create a project and shots
 
-总览所有镜头；上传/更换图片；拖拽排序；点击选中后右侧显示属性。
+1. Click **New** in the library.
+2. Click **New shot** on the left; add as many as you need.
+3. Select a shot from the list.
 
-### 3D 姿态
+### 2. Add an image (pick one)
 
-- **旋转视角**：左键拖拽  
-- **平移**：右键或中键拖拽  
-- **缩放**：滚轮  
-- 选中人偶后可用移动 / 旋转 / 缩放工具调整  
-- 摆好后点 **「生成镜头图」** 写入当前镜头  
-- 可从角色/模型库加人偶，也可导入自定义模型
+| View | Best for |
+|------|----------|
+| **Board** | Upload images; overview / reorder |
+| **3D Pose** | Pose characters/cameras, then “Generate shot image” |
+| **Annotation** | Draw on an existing frame |
+| **AI Image** | Prompt / reference generation via your API |
 
-### 标注
+Simplest path: **upload an image** on a Board card.
 
-在当前镜头图上绘制：画笔、直线、方框、圆、箭头、文字、填充等。支持图层、撤销重做（Ctrl+Z / Ctrl+Y）。按 **Tab** 可隐藏/显示浮窗工具面板。标注内容随镜头保存，导出时一并体现。
+### 3. Director notes (recommended)
 
-### AI 生图
+With a shot selected, fill framing, camera, duration, notes on the right. They appear in PDF export.
 
-1. 在面板中配置 **接口地址、密钥、模型名**。  
-2. 选中有底图的镜头，填写提示词；可选上传角色/场景参考图。  
-3. 点 **「生成」**，满意后 **保存为新版本**，可在版本之间切换。
+### 4. Reorder
 
----
+Drag cards on the **Board** view. Export order follows this list.
 
-## 设置与其它
+### 5. Save and export
 
-- **画幅比例 / 安全框 / PDF 页眉**：在设置或元数据相关入口调整  
-- **主题 / 语言**：顶部切换界面风格与中英文  
-- **快捷键**：顶部可打开快捷键列表  
+- **Save / Save as** — local library or project file
+- **Import / Export** menu:
+  - **PDF** — print / client handoff
+  - **Image ZIP** — packed frames
+  - **Excel / CSV** — shot lists
+  - **Project file** — full backup / migrate
 
----
-
-## 常见问题
-
-**数据会丢吗？**  
-项目默认存在本机浏览器。换电脑、清缓存或换浏览器会看不到旧项目，请用「导出工程」备份。
-
-**AI 生图怎么用？**  
-在 AI 生图面板填入你的图像接口地址、密钥和模型名后即可生成。
-
-**`public/models` 里的模型？**  
-若含受限资产，对外分发前请自行替换为可自由使用的资源。
+Export project files regularly; clearing site data wipes the local library.
 
 ---
 
-## 一句话小结
+## Four workspace views
 
-**新建镜头 → 分镜板上传图（或 3D / 标注 / AI）→ 右侧写备注 → 拖拽排顺序 → 导出 PDF / ZIP / Excel / 工程文件。**
+### Board
 
-部署说明见 [DEPLOY.md](DEPLOY.md)。
+Overview all shots; upload/replace images; drag to reorder; select a shot to edit properties.
+
+### 3D Pose
+
+- **Orbit:** left-drag  
+- **Pan:** right- or middle-drag  
+- **Zoom:** scroll wheel  
+- Move / rotate / scale selected mannequins  
+- **Generate shot image** writes into the current shot  
+- Add characters from the library, or import custom models  
+
+### Annotation
+
+Draw on the current frame: brush, line, rect, ellipse, arrow, text, fill, etc. Layers and undo/redo (Ctrl+Z / Ctrl+Y). **Tab** toggles floating panels. Annotations save with the shot and export together.
+
+### AI Image
+
+1. Configure **endpoint, API key, model**.  
+2. Select a shot (with a base image if needed), enter a prompt; optional character/scene references.  
+3. **Generate**, then **save as a new version** and switch versions as needed.
 
 ---
 
-## 许可
+## Settings and more
 
-本项目采用 [**GNU Affero General Public License v3.0 or later**](LICENSE)（**AGPL-3.0-or-later**）。
+- **Aspect ratio / safe frame / PDF header** — settings or metadata entries  
+- **Theme / language** — top bar  
+- **Shortcuts** — open the shortcut list from the top bar  
 
-相对 GPL，AGPL 额外要求：若通过网络提供基于本软件的修改版服务，也须向用户提供完整对应源码。
+---
+
+## FAQ
+
+**Will I lose data?**  
+Projects live in the browser by default. Another machine, cleared cache, or another browser will not see them — export a project file for backup.
+
+**How do I use AI Image?**  
+Enter your image API endpoint, key, and model name in the AI Image panel.
+
+**Models under `public/models`?**  
+If any assets are restricted, replace them with freely usable ones before redistribution.
+
+---
+
+## One-line summary
+
+**New shots → Board upload (or 3D / Annotation / AI) → notes on the right → drag to order → export PDF / ZIP / Excel / project file.**
+
+Deployment notes: [DEPLOY.md](DEPLOY.md).
+
+---
+
+## License
+
+This work is released under [**CC BY-NC-SA 4.0**](LICENSE).  
+You may share and adapt it freely for **non-commercial** use, provided **attribution** is retained and adaptations are shared alike.
 
 | | |
 |---|---|
-| **Permissions** | 商用、修改、分发、专利使用、私有使用 |
-| **Conditions** | 保留版权声明；披露源码；网络提供服务时也须开源；衍生作品使用相同许可 |
-| **Limitations** | 无担保；责任限制 |
+| **Permissions** | Share and adapt (non-commercial) |
+| **Conditions** | Attribution; ShareAlike |
+| **Limitations** | NonCommercial; no warranty |
 
-**可选商业双授权**：若需在闭源产品中使用且不遵守 AGPL 义务，可联系版权方购买商业许可。  
-Telegram：https://t.me/+7AU5WrfdDZtlMTll · [仓库](https://github.com/Miatoo/Ingbord)
+Full text: [LICENSE](LICENSE).  
+Telegram: https://t.me/+7AU5WrfdDZtlMTll · [Repository](https://github.com/Miatoo/Ingbord)

@@ -38,10 +38,9 @@ Issues、文档与发行包请在仓库中查看。`,
     title: '用户协议',
     body: `使用影格 Ingbord（开源纯本地版）即表示你同意：
 
-1. 本软件以 GNU Affero General Public License v3.0 或后续版本（AGPL-3.0-or-later）发布；使用、修改与分发须遵守该许可（含网络提供服务时的源码披露义务）。
+1. 本作品基于 CC BY-NC-SA 4.0 协议发布。在保留署名的前提下，可自由分享和改编（非商用）。
 2. 自行导入的模型、图片与文案由你负责授权与合规。
 3. 本软件按现状提供；在法律允许范围内不承担间接损失责任。
-4. 若需闭源商用且不遵守 AGPL 义务，可联系版权方获取单独商业许可。
 
 条款以仓库 LICENSE 为准。联系：${TELEGRAM}`,
   },
@@ -96,10 +95,9 @@ Issues, docs, and releases are on the repository.`,
     title: 'Terms of Use',
     body: `By using Ingbord (open local edition) you agree to:
 
-1. This software is licensed under the GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later). Use, modification, and distribution must comply with that license (including source disclosure when offering the software over a network).
+1. This work is licensed under CC BY-NC-SA 4.0. You may share and adapt it for non-commercial purposes with attribution retained.
 2. Ensure rights to any models, images, and text you import.
 3. Use the software as-is; no liability for indirect damages to the extent permitted by law.
-4. For proprietary/commercial use without AGPL obligations, contact the copyright holder for a separate commercial license.
 
 See LICENSE in the repository. Contact: ${TELEGRAM}`,
   },
