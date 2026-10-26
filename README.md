@@ -1,5 +1,3 @@
-<img width="1912" height="914" alt="image" src="https://github.com/user-attachments/assets/b3f2eca8-a7ab-4a74-9172-1599bcdf2c14" /># Ingbord
-
 A professional storyboard / shot-list editor.
 
 **Live demo:** https://miatoo.github.io/Ingbord/
