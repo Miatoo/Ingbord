@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/Ingbord/logo.svg" type="image/svg+xml" media="(prefers-color-scheme: light)" />
+    <link rel="icon" href="/Ingbord/logo-light.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>影格 Ingbord</title>
+    <script>
+      (function () {
+        try {
+          if ((window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ||
+              /Capacitor/i.test(navigator.userAgent)) {
+            document.documentElement.classList.add('native-app');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <script type="module" crossorigin src="/Ingbord/assets/index-IUGG6Fau.js"></script>
+    <link rel="stylesheet" crossorigin href="/Ingbord/assets/index-DNpeOJG6.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+
+

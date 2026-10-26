@@ -1,0 +1,12 @@
+{
+  "framing": ["CU", "MS", "WS", "ECU", "ELS"],
+  "angles": [
+    { "angle": "eye", "height": 1.6, "label": "Eye (1.6m)" },
+    { "angle": "low", "height": 1.2, "label": "Low (1.2m)" },
+    { "angle": "high", "height": 2.0, "label": "High (2.0m)" },
+    { "angle": "low", "height": 0.8, "label": "Low (0.8m)" },
+    { "angle": "high", "height": 2.5, "label": "High (2.5m)" },
+    { "angle": "eye", "height": 1.4, "label": "Eye (1.4m)" },
+    { "angle": "eye", "height": 1.8, "label": "Eye (1.8m)" }
+  ]
+}
