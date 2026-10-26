@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react';
 import { useUIStore } from '../../../store/uiStore';
 import { useProjectStore } from '../../../store/projectStore';
 import { DrawingCanvas, DrawingCanvasRef, type HistoryState } from './DrawingCanvas';
@@ -70,6 +70,8 @@ export function AnnotationEditor() {
   const [texturePatternImage, setTexturePatternImage] = useState<HTMLImageElement | null>(null);
   const [activeBrushLabel, setActiveBrushLabel] = useState('');
   const canvasRef = useRef<DrawingCanvasRef>(null);
+  const floatRootRef = useRef<HTMLDivElement>(null);
+  const [layersRightX, setLayersRightX] = useState(400);
   const zCounter = useRef(60);
   const lastCustomBrushRef = useRef<CustomBrush | null>(null);
   const brushApplyGenRef = useRef(0);
@@ -88,6 +90,16 @@ export function AnnotationEditor() {
     if (!tablet) return;
     setDetailOpen(false);
   }, [tablet]);
+
+  useLayoutEffect(() => {
+    const el = floatRootRef.current;
+    if (!el) return;
+    const update = () => setLayersRightX(Math.max(12, el.clientWidth - 240));
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [shot?.id]);
 
   useEffect(() => {
     const layout = loadFullLayout();
@@ -724,7 +736,11 @@ export function AnnotationEditor() {
   };
 
   return (
-    <div className="flex-1 relative min-h-0 bg-gray-100 dark:bg-gray-800 overflow-hidden" data-float-root>
+    <div
+      ref={floatRootRef}
+      className="flex-1 relative min-h-0 bg-gray-100 dark:bg-gray-800 overflow-hidden"
+      data-float-root
+    >
       <DrawingCanvas {...canvasProps} />
 
       {panelsHidden ? (
@@ -914,7 +930,7 @@ export function AnnotationEditor() {
             id={layersId}
             title={t('drawing.layers')}
             defaultPos={{
-              x: typeof window !== 'undefined' ? Math.max(120, window.innerWidth - 250) : 640,
+              x: layersRightX,
               y: tablet ? 48 : 52,
             }}
             open={layersOpen}

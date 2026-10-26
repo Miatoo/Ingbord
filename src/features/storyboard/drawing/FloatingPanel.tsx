@@ -120,7 +120,14 @@ function saveState(id: string, pos: FloatingPanelPos, collapsed: boolean, w: num
   }
 }
 
-function parentSize(el: HTMLElement | null): { pw: number; ph: number } {
+function parentSize(el: HTMLElement | null, fallbackRoot?: HTMLElement | null): { pw: number; ph: number } {
+  const root =
+    fallbackRoot ||
+    (el?.closest('[data-float-root]') as HTMLElement | null) ||
+    null;
+  if (root) {
+    return { pw: root.clientWidth || window.innerWidth, ph: root.clientHeight || window.innerHeight };
+  }
   const parent = el?.offsetParent as HTMLElement | null;
   return {
     pw: parent?.clientWidth || window.innerWidth,
@@ -254,6 +261,36 @@ export function FloatingPanel({
     setPortalHost(root);
   }, [guest, open, id]);
 
+  // Orphan merge guest (host gone / slot missing): undock so the panel can show again
+  useLayoutEffect(() => {
+    if (!open || !guest) return;
+    if (getPanelSlot(id)) return;
+    const freed = splitPanel(id);
+    if (freed) {
+      setPos(freed);
+      posRef.current = freed;
+    }
+    window.dispatchEvent(new CustomEvent(FLOAT_DOCK_EVENT));
+    bumpDock();
+  }, [open, guest, id, bumpDock, dockRev]);
+
+  // Keep panel inside the float-root (defaults / localStorage often use window.innerWidth)
+  useLayoutEffect(() => {
+    if (!open || guest || draggingRef.current) return;
+    const el = panelRef.current;
+    if (!el && !portalHost) return;
+    const { pw, ph } = parentSize(el, portalHost);
+    if (pw < 80 || ph < 80) return;
+    const w = Math.min(sizeRef.current.w || defaultW, pw - 8);
+    const h = sizeRef.current.h > 0 ? sizeRef.current.h : el?.offsetHeight || 200;
+    const cur = posRef.current;
+    const next = clampPanelPos(cur.x, cur.y, w, Math.min(h, ph - 8), pw, ph);
+    if (next.x !== cur.x || next.y !== cur.y) {
+      posRef.current = next;
+      setPos(next);
+    }
+  }, [open, guest, portalHost, dockRev, defaultW]);
+
   const publishRect = useCallback(() => {
     // Guests have no own window — only host/solo register for snap
     if (isMergeGuest(id) || !open) {
@@ -265,7 +302,7 @@ export function FloatingPanel({
       unregisterPanel(id);
       return;
     }
-    const { pw, ph } = parentSize(el);
+    const { pw, ph } = parentSize(el, portalHost);
     const w = sizeRef.current.w || el.offsetWidth || 120;
     const h = el.offsetHeight || 40;
     registerPanelRect({
@@ -277,7 +314,7 @@ export function FloatingPanel({
       parentW: pw,
       parentH: ph,
     });
-  }, [id, open]);
+  }, [id, open, portalHost]);
 
   useEffect(() => {
     if (draggingRef.current) return;

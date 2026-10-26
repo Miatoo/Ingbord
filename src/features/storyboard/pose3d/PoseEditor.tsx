@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback, useLayoutEffect } from 'react';
 import { useUIStore } from '../../../store/uiStore';
 import { useProjectStore } from '../../../store/projectStore';
 import { PoseEditorCanvas, PoseEditorCanvasRef } from './PoseEditorCanvas';
@@ -24,9 +24,11 @@ export function PoseEditor() {
   const activeShotId = useUIStore((state) => state.activeShotId);
   const getShot = useProjectStore((state) => state.getShot);
   const canvasRef = useRef<PoseEditorCanvasRef>(null);
+  const floatRootRef = useRef<HTMLDivElement>(null);
   const tablet = useTabletLayout();
   const openDrawer = useUIStore((state) => state.openDrawer);
   const closeDrawer = useUIStore((state) => state.closeDrawer);
+  const [rightX, setRightX] = useState(400);
 
   const [panelsHidden, setPanelsHidden] = useState(false);
   const [actionLibOpen, setActionLibOpen] = useState(false);
@@ -71,6 +73,16 @@ export function PoseEditor() {
     }));
   }, [tablet]);
 
+  useLayoutEffect(() => {
+    const el = floatRootRef.current;
+    if (!el) return;
+    const update = () => setRightX(Math.max(12, el.clientWidth - 288));
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [shot?.id]);
+
   const focusPanel = useCallback((key: PosePanelKey) => {
     zCounter.current += 1;
     setPanelZ((prev) => ({ ...prev, [key]: zCounter.current }));
@@ -104,11 +116,13 @@ export function PoseEditor() {
     { key: 'controls', label: t('pose3d.panel.controls') },
   ];
 
-  const rightX = typeof window !== 'undefined' ? Math.max(160, window.innerWidth - 300) : 720;
-
   return (
     <PoseEditorRefContext.Provider value={canvasRef}>
-      <div className="flex-1 relative min-h-0 bg-gray-900 overflow-hidden" data-float-root>
+      <div
+        ref={floatRootRef}
+        className="flex-1 relative min-h-0 bg-gray-900 overflow-hidden"
+        data-float-root
+      >
         <div className="absolute inset-0">
           <PoseEditorCanvas ref={canvasRef} shotId={shot.id} />
         </div>
