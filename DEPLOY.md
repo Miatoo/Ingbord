@@ -1,6 +1,12 @@
 # 静态部署
 
-构建后将站点文件放到任意静态服务器即可。
+当前仓库已通过 GitHub Pages 发布：
+
+https://miatoo.github.io/Ingbord/
+
+（`gh-pages` 分支为构建产物；更新网页时重新 `npm run build` 后推送 `dist` 到该分支即可。）
+
+构建后也可将站点文件放到任意静态服务器。
 
 ## 构建
 
