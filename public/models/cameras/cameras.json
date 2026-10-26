@@ -1,0 +1,8 @@
+{
+  "virtual-camera": {
+    "id": "virtual-camera",
+    "name": "Virtual Camera",
+    "type": "camera",
+    "model": "characters/virtual-camera.glb"
+  }
+}

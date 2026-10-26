@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&display=swap');
+
+body.theme-pink-cute {
+  font-family: 'Cherry Bomb One', cursive; /* 假设使用可爱字体 */
+  image-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #FFC0CB, #FF69B4); /* 柔和的粉色渐变背景 */
+  color: #362F4A; /* 深色文本 */
+}
+
+body.theme-pink-cute .grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(255,192,203,0.2) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,192,203,0.2) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+body.theme-pink-cute .retro-window {
+  border: 3px solid #FF69B4; /* 热粉色边框 */
+  box-shadow: 5px 5px 0px rgba(255,105,180,0.4); /* 粉色阴影 */
+  background: #FFF0F5; /* 薰衣草淡紫色背景 */
+  border-radius: 12px; /* 圆角 */
+  color: #362F4A;
+}
+
+body.theme-pink-cute .retro-header {
+  background: #FF69B4; /* 热粉色标题栏 */
+  color: white;
+  padding: 8px 16px;
+  border-radius: 9px 9px 0 0;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+body.theme-pink-cute .pixel-border-button {
+  border: 3px solid #FF69B4; /* 热粉色边框 */
+  box-shadow: 3px 3px 0px rgba(255,105,180,0.5); /* 粉色阴影 */
+  transition: transform 0.1s, box-shadow 0.1s;
+  background: #FFC0CB; /* 浅粉色按钮背景 */
+  color: #362F4A;
+  border-radius: 8px;
+}
+
+body.theme-pink-cute .pixel-border-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px rgba(255,105,180,0.5);
+}
+
+body.theme-pink-cute .pixel-border-button:hover {
+  background: #FFDAB9; /* 桃色 */
+}
+
+/* 激活状态 */
+body.theme-pink-cute .pixel-border-button.active,
+body.theme-pink-cute .pixel-border-button.bg-black.text-white,
+body.theme-pink-cute .pixel-border-button.bg-primary.text-white {
+  background-color: #FF69B4 !important; /* 热粉色 */
+  color: white !important;
+  border-color: #FF69B4 !important;
+}
+
+/* 侧边栏项 */
+body.theme-pink-cute .sidebar-item {
+  border: 2px solid #FFC0CB;
+  background-color: #FFF0F5;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 8px;
+  color: #362F4A;
+  box-shadow: 2px 2px 0px rgba(255,192,203,0.3);
+}
+
+body.theme-pink-cute .sidebar-item:hover {
+  background-color: #FFDAB9;
+  box-shadow: 3px 3px 0px rgba(255,192,203,0.4);
+}
+
+body.theme-pink-cute .sidebar-item.active {
+  background-color: #FF69B4 !important;
+  color: white !important;
+  border-color: #FF69B4 !important;
+  box-shadow: 0 0 0px rgba(255,192,203,0.5);
+}
+
+body.theme-pink-cute .sidebar-item.active * {
+  color: white !important;
+}
+
+/* 暗色模式下的调整 */
+.dark body.theme-pink-cute {
+  background: linear-gradient(135deg, #362F4A, #4A3C5C);
+  color: #FFF0F5;
+}
+
+.dark body.theme-pink-cute .grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(255,192,203,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,192,203,0.05) 1px, transparent 1px);
+}
+
+.dark body.theme-pink-cute .retro-window {
+  border: 3px solid #4A3C5C;
+  box-shadow: 5px 5px 0px rgba(74,60,92,0.6);
+  background: #362F4A;
+  color: #FFF0F5;
+}
+
+.dark body.theme-pink-cute .retro-header {
+  background: #4A3C5C;
+  color: white;
+}
+
+.dark body.theme-pink-cute .pixel-border-button {
+  border: 3px solid #4A3C5C;
+  box-shadow: 3px 3px 0px rgba(74,60,92,0.7);
+  background: #362F4A;
+  color: #FFF0F5;
+}
+
+.dark body.theme-pink-cute .pixel-border-button:active {
+  box-shadow: 1px 1px 0px rgba(74,60,92,0.7);
+}
+
+.dark body.theme-pink-cute .pixel-border-button:hover {
+  background: #5C4F7F; /* 较深的紫粉色 */
+}
+
+.dark body.theme-pink-cute .pixel-border-button.active,
+.dark body.theme-pink-cute .pixel-border-button.bg-white.text-black {
+  background-color: #4A3C5C !important;
+  color: white !important;
+  border-color: #4A3C5C !important;
+}
+
+.dark body.theme-pink-cute .sidebar-item {
+  border: 2px solid #4A3C5C;
+  background-color: #362F4A;
+  color: #FFF0F5;
+  box-shadow: 2px 2px 0px rgba(74,60,92,0.4);
+}
+
+.dark body.theme-pink-cute .sidebar-item:hover {
+  background-color: #4A3C5C;
+  box-shadow: 3px 3px 0px rgba(74,60,92,0.5);
+}
+
+.dark body.theme-pink-cute .sidebar-item.active {
+  background-color: #4A3C5C !important;
+  color: white !important;
+  border-color: #4A3C5C !important;
+}

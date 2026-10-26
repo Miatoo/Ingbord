@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 515 570">
+  <defs>
+    <mask id="clapboard-logo">
+      <rect width="515" height="570" fill="#000"/>
+      <rect x="162.6" y="40.7" width="352.4" height="352.4" rx="72.3" fill="#fff"/>
+      <rect x="68.6" y="109.3" width="377.8" height="377.8" rx="85" fill="#000"/>
+      <rect x="81.3" y="122" width="352.4" height="352.4" rx="72.3" fill="#fff"/>
+      <rect x="-12.7" y="190.6" width="377.8" height="377.8" rx="85" fill="#000"/>
+      <rect x="0" y="203.3" width="352.4" height="352.4" rx="72.3" fill="#fff"/>
+      <path fill="#000" d="M176.2 259.7Q194.8 360.9 296 379.5Q194.8 398.1 176.2 499.3Q157.6 398.1 56.4 379.5Q157.6 360.9 176.2 259.7Z"/>
+    </mask>
+  </defs>
+  <rect width="515" height="570" fill="#ffffff" mask="url(#clapboard-logo)"/>
+</svg>

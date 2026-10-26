@@ -1,0 +1,15 @@
+{
+  "presets": [
+    { "id": "cu-eye", "name": "特写 平视", "position": [0, 1.6, 2], "target": [0, 1.6, 0] },
+    { "id": "cu-low", "name": "特写 低机位", "position": [0, 1.2, 2], "target": [0, 1.6, 0] },
+    { "id": "cu-high", "name": "特写 高机位", "position": [0, 2, 2], "target": [0, 1.6, 0] },
+    { "id": "ms-eye", "name": "中景 平视", "position": [0, 1.6, 4], "target": [0, 1.6, 0] },
+    { "id": "ms-low", "name": "中景 低机位", "position": [0, 1.2, 4], "target": [0, 1.6, 0] },
+    { "id": "ms-high", "name": "中景 高机位", "position": [0, 2, 4], "target": [0, 1.6, 0] },
+    { "id": "ws-eye", "name": "远景 平视", "position": [0, 1.6, 8], "target": [0, 1.6, 0] },
+    { "id": "ws-low", "name": "远景 低机位", "position": [0, 1.2, 8], "target": [0, 1.6, 0] },
+    { "id": "ws-high", "name": "远景 高机位", "position": [0, 2, 8], "target": [0, 1.6, 0] },
+    { "id": "ecu-eye", "name": "大特写 平视", "position": [0, 1.6, 1], "target": [0, 1.6, 0] },
+    { "id": "els-eye", "name": "大远景 平视", "position": [0, 1.6, 12], "target": [0, 1.6, 0] }
+  ]
+}
