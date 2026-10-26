@@ -1,4 +1,4 @@
-# Ingbord
+<img width="1912" height="914" alt="image" src="https://github.com/user-attachments/assets/b3f2eca8-a7ab-4a74-9172-1599bcdf2c14" /># Ingbord
 
 A professional storyboard / shot-list editor.
 
@@ -9,6 +9,7 @@ English · [中文](README-zh.md)
 Built for short-form and commercial boards, class scripts, practice boards, and indie production.
 
 ## Features
+<img width="2752" height="1536" alt="main-en" src="https://github.com/user-attachments/assets/c6b2ac8b-b976-4b2e-9983-d06379dbdfba" />
 
 | Feature | Description |
 |------|------|
@@ -61,66 +62,16 @@ npm run build
 
 Serve `dist/` with Nginx, Cloudflare Pages, etc. See [DEPLOY.md](DEPLOY.md).
 
----
-
-## UI overview
-
-You start in the **project library** (create or open a project). In the editor:
-
-- **Top:** project name, back to library, new/save, import/export, tutorial, properties, language, theme, settings
-- **Left:** shot list (create, switch, …)
-- **Center:** tabs — **Board / 3D Pose / Annotation / AI Image**
-- **Right:** shot properties and director notes
-
----
-
-## First storyboard (recommended flow)
-
-### 1. Create a project and shots
-
-1. Click **New** in the library.
-2. Click **New shot** on the left; add as many as you need.
-3. Select a shot from the list.
-
-### 2. Add an image (pick one)
-
-| View | Best for |
-|------|----------|
-| **Board** | Upload images; overview / reorder |
-| **3D Pose** | Pose characters/cameras, then “Generate shot image” |
-| **Annotation** | Draw on an existing frame |
-| **AI Image** | Prompt / reference generation via your API |
-
-Simplest path: **upload an image** on a Board card.
-
-### 3. Director notes (recommended)
-
-With a shot selected, fill framing, camera, duration, notes on the right. They appear in PDF export.
-
-### 4. Reorder
-
-Drag cards on the **Board** view. Export order follows this list.
-
-### 5. Save and export
-
-- **Save / Save as** — local library or project file
-- **Import / Export** menu:
-  - **PDF** — print / client handoff
-  - **Image ZIP** — packed frames
-  - **Excel / CSV** — shot lists
-  - **Project file** — full backup / migrate
-
-Export project files regularly; clearing site data wipes the local library.
-
----
 
 ## Four workspace views
 
 ### Board
+<img width="1912" height="914" alt="image" src="https://github.com/user-attachments/assets/82230de2-debb-4ca1-beac-fa1fdd991c76" />
 
 Overview all shots; upload/replace images; drag to reorder; select a shot to edit properties.
 
 ### 3D Pose
+<img width="1912" height="914" alt="image" src="https://github.com/user-attachments/assets/2fb9f450-b67c-40aa-8d59-48642a5e440b" />
 
 - **Orbit:** left-drag  
 - **Pan:** right- or middle-drag  
@@ -130,10 +81,12 @@ Overview all shots; upload/replace images; drag to reorder; select a shot to edi
 - Add characters from the library, or import custom models  
 
 ### Annotation
+<img width="1912" height="914" alt="image" src="https://github.com/user-attachments/assets/e33b36fa-a566-4272-b29a-bffcaa417f5b" />
 
 Draw on the current frame: brush, line, rect, ellipse, arrow, text, fill, etc. Layers and undo/redo (Ctrl+Z / Ctrl+Y). **Tab** toggles floating panels. Annotations save with the shot and export together.
 
 ### AI Image
+<img width="1912" height="914" alt="aigenerate" src="https://github.com/user-attachments/assets/3731f43b-3322-4728-897f-0e857400ccc2" />
 
 1. Configure **endpoint, API key, model**.  
 2. Select a shot (with a base image if needed), enter a prompt; optional character/scene references.  
