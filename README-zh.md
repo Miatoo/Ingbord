@@ -5,7 +5,8 @@
 [English](README.md) · 中文
 
 适合短视频与广告分镜、课程脚本、故事板练习、独立创作等。
-<img width="1912" height="914" alt="aigenerate" src="https://github.com/user-attachments/assets/930bd4e3-2c2a-4df2-b375-1e3ec1a4e213" /># 影格 Ingbord
+<img width="2752" height="1536" alt="main-zh" src="https://github.com/user-attachments/assets/a6ace6eb-56c0-4c6d-b3e4-44f977677e2d" />
+
 ## 能做什么
 
 | 能力 | 说明 |
