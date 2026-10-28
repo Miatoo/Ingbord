@@ -36,13 +36,14 @@ Issues、文档与发行包请在仓库中查看。`,
   terms: {
     slug: 'terms',
     title: '用户协议',
-    body: `使用影格 Ingbord（开源纯本地版）即表示你同意：
+    body: `欢迎使用影格 Ingbord。使用本软件即表示你已阅读并同意：
 
-1. 整个项目（源码、文档与配置）统一基于 CC BY-NC-SA 4.0 协议发布。在保留署名的前提下，可自由分享和改编（非商用）。
-2. 自行导入的模型、图片与文案由你负责授权与合规。
-3. 本软件按现状提供；在法律允许范围内不承担间接损失责任。
+1. 本软件按 CC BY-NC-SA 4.0 协议提供：保留署名、非商用前提下可分享与改编。
+2. 你自行导入或生成的模型、图片、文案等内容，须确保已获合法授权，相关责任由你承担。
+3. 本软件按「现状」提供；在适用法律允许的范围内，作者不对间接损失承担责任。
 
-条款以仓库根目录 LICENSE 为准（全仓同一许可）。联系：${TELEGRAM}`,
+完整许可条款以项目仓库 LICENSE 为准。
+联系：${TELEGRAM}`,
   },
   privacy: {
     slug: 'privacy',
@@ -93,13 +94,14 @@ Issues, docs, and releases are on the repository.`,
   terms: {
     slug: 'terms',
     title: 'Terms of Use',
-    body: `By using Ingbord (open local edition) you agree to:
+    body: `Welcome to Ingbord. By using this software you agree that:
 
-1. The entire project (source, docs, and config) is licensed under CC BY-NC-SA 4.0. You may share and adapt it for non-commercial purposes with attribution retained.
-2. Ensure rights to any models, images, and text you import.
-3. Use the software as-is; no liability for indirect damages to the extent permitted by law.
+1. The software is provided under CC BY-NC-SA 4.0 — you may share and adapt it for non-commercial use with attribution.
+2. You are responsible for rights and compliance of any models, images, or text you import or generate.
+3. The software is provided as-is; to the extent permitted by law, authors are not liable for indirect damages.
 
-See the root LICENSE file (one license for the whole repository). Contact: ${TELEGRAM}`,
+Full license terms are in the repository LICENSE.
+Contact: ${TELEGRAM}`,
   },
   privacy: {
     slug: 'privacy',
