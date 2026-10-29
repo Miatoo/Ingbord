@@ -26,8 +26,9 @@ export function canImportCustomModel(): boolean {
   return true;
 }
 
+/** PDF 导出现在始终带品牌水印/角标；此开关保留兼容，开源版不再单独控制 */
 export function showPdfCreditFooter(): boolean {
-  return false;
+  return true;
 }
 
 export function canUseByokAI(): boolean {

@@ -1,5 +1,6 @@
 import ExcelJS from 'exceljs';
 import type { Project, Shot } from '../types';
+import { EXPORT_BRAND } from '../utils/exportBranding';
 
 export type ExcelImportShot = {
   shotNumber?: string;
@@ -176,10 +177,15 @@ function looksLikeDataUrl(value: string): boolean {
 }
 
 /** 将当前工程导出为 .xlsx（含嵌入镜头图片） */
-export async function buildStoryboardWorkbook(project: Project, shots: Shot[]): Promise<Blob> {
+export async function buildStoryboardWorkbook(
+  project: Project,
+  shots: Shot[],
+  options?: { brandLocale?: 'zh' | 'en' }
+): Promise<Blob> {
   const workbook = new ExcelJS.Workbook();
   workbook.creator = 'Ingbord';
   workbook.created = new Date();
+  const brandLocale = options?.brandLocale ?? 'zh';
 
   const shotsSheet = workbook.addWorksheet('Shots', {
     views: [{ state: 'frozen', ySplit: 1 }],
@@ -242,9 +248,23 @@ export async function buildStoryboardWorkbook(project: Project, shots: Shot[]): 
     ['pdfPageWidthMm', project.pdfPageWidthMm ?? ''],
     ['pdfPageHeightMm', project.pdfPageHeightMm ?? ''],
     ['createdAt', project.createdAt || ''],
+    ['exportedBy', EXPORT_BRAND.name],
+    ['website', EXPORT_BRAND.site],
   ];
   for (const [key, value] of projectRows) {
     projectSheet.addRow([key, value]);
+  }
+
+  const aboutSheet = workbook.addWorksheet(
+    brandLocale === 'en' ? 'About Ingbord' : '关于影格'
+  );
+  aboutSheet.getColumn(1).width = 72;
+  const aboutLines =
+    brandLocale === 'en'
+      ? [EXPORT_BRAND.creditEn, EXPORT_BRAND.site, 'Repository: https://github.com/Miatoo/Ingbord']
+      : [EXPORT_BRAND.creditZh, EXPORT_BRAND.site, '开源仓库：https://github.com/Miatoo/Ingbord'];
+  for (const line of aboutLines) {
+    aboutSheet.addRow([line]);
   }
 
   const buffer = await workbook.xlsx.writeBuffer();

@@ -106,7 +106,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
       name,
       shots: [],
       aspectRatio: '16:9',
-      pdfHeaderText: '第 {page} 页',
+      pdfHeaderText: undefined,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -131,7 +131,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
       id: createId(),
       name: importData.project.name || '导入的项目',
       aspectRatio: importData.project.aspectRatio || '16:9',
-      pdfHeaderText: importData.project.pdfHeaderText || '第 {page} 页',
+      pdfHeaderText: importData.project.pdfHeaderText || undefined,
       pdfColumns: importData.project.pdfColumns,
       pdfRows: importData.project.pdfRows,
       pdfPageWidthMm: importData.project.pdfPageWidthMm,

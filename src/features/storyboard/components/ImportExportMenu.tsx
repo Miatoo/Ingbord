@@ -8,11 +8,127 @@ import { saveBlob } from '../../../utils/saveFile';
 import { upsertSavedProject } from '../../../services/projectService';
 import { isClapboardProjectFile, parseProjectFile } from '../../../services/projectFileFormat';
 import { buildStoryboardWorkbook, parseStoryboardWorkbook } from '../../../services/excelIO';
+import {
+  EXPORT_BRAND,
+  exportBrandReadme,
+  resolvePdfPageHeaderText,
+} from '../../../utils/exportBranding';
 import { UiIcon } from './UiIcon';
 import { anchorPortalMenu } from '../../../utils/anchorPortalMenu';
 
+/** PDF 水印 + 角标：随界面语言切换中英文（开源版无用户限制） */
+function stampPdfBrand(
+  pdf: InstanceType<typeof jsPDF>,
+  pageWidth: number,
+  pageHeight: number,
+  renderText: (
+    text: string,
+    fontSize: number,
+    color?: { r: number; g: number; b: number }
+  ) => { imageData: string; width: number; height: number },
+  locale: 'zh' | 'en'
+) {
+  const margin = 14;
+  const brandName = locale === 'en' ? EXPORT_BRAND.nameEn : EXPORT_BRAND.name;
+  const wmText =
+    locale === 'en' ? EXPORT_BRAND.watermarkEn : EXPORT_BRAND.watermarkZh;
+  const creditLine =
+    locale === 'en' ? EXPORT_BRAND.creditEn : EXPORT_BRAND.creditZh;
+
+  // 1) 单条居中水印，透明度 20%
+  const anyPdf = pdf as InstanceType<typeof jsPDF> & {
+    GState?: new (opts: { opacity: number }) => unknown;
+    setGState?: (state: unknown) => void;
+    saveGraphicsState?: () => void;
+    restoreGraphicsState?: () => void;
+  };
+  anyPdf.saveGraphicsState?.();
+  if (typeof anyPdf.GState === 'function' && typeof anyPdf.setGState === 'function') {
+    anyPdf.setGState(new anyPdf.GState({ opacity: 0.2 }));
+  }
+  if (locale === 'en') {
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(22);
+    pdf.setTextColor(120, 120, 128);
+    pdf.text(wmText, pageWidth / 2, pageHeight / 2, {
+      align: 'center',
+      baseline: 'middle',
+      angle: 32,
+    });
+  } else {
+    const wm = renderText(wmText, 36, { r: 120, g: 120, b: 128 });
+    if (wm.imageData && wm.width > 0 && wm.height > 0) {
+      const w = (wm.width / 96) * 25.4;
+      const h = (wm.height / 96) * 25.4;
+      pdf.addImage(
+        wm.imageData,
+        'PNG',
+        (pageWidth - w) / 2,
+        (pageHeight - h) / 2,
+        w,
+        h
+      );
+    }
+  }
+  if (typeof anyPdf.GState === 'function' && typeof anyPdf.setGState === 'function') {
+    anyPdf.setGState(new anyPdf.GState({ opacity: 1 }));
+  }
+  anyPdf.restoreGraphicsState?.();
+
+  // 2) 页脚署名 / 角标
+  pdf.setFillColor(250, 250, 252);
+  pdf.rect(0, pageHeight - 14, pageWidth, 14, 'F');
+  pdf.setDrawColor(220, 220, 224);
+  pdf.setLineWidth(0.3);
+  pdf.line(margin, pageHeight - 14, pageWidth - margin, pageHeight - 14);
+
+  const credit = renderText(creditLine, 12, { r: 90, g: 90, b: 98 });
+  if (credit.imageData && credit.width > 0 && credit.height > 0) {
+    const creditW = (credit.width / 96) * 25.4;
+    const creditH = (credit.height / 96) * 25.4;
+    pdf.addImage(
+      credit.imageData,
+      'PNG',
+      margin,
+      pageHeight - 12,
+      creditW,
+      Math.min(creditH, 10)
+    );
+  }
+
+  const badge = renderText(`${brandName} · ${EXPORT_BRAND.siteHost}`, 12, {
+    r: 55,
+    g: 55,
+    b: 62,
+  });
+  if (badge.imageData && badge.width > 0 && badge.height > 0) {
+    const badgeW = (badge.width / 96) * 25.4;
+    const badgeH = (badge.height / 96) * 25.4;
+    pdf.addImage(
+      badge.imageData,
+      'PNG',
+      pageWidth - margin - badgeW,
+      pageHeight - 12,
+      badgeW,
+      Math.min(badgeH, 10)
+    );
+  }
+
+  // 3) 页眉下方网站名
+  const headerBrand = renderText(EXPORT_BRAND.siteHost, 11, {
+    r: 110,
+    g: 110,
+    b: 118,
+  });
+  if (headerBrand.imageData && headerBrand.width > 0 && headerBrand.height > 0) {
+    const w = (headerBrand.width / 96) * 25.4;
+    const h = (headerBrand.height / 96) * 25.4;
+    pdf.addImage(headerBrand.imageData, 'PNG', margin, margin + 7, w, h);
+  }
+}
+
 export function ImportExportMenu({ block = false }: { block?: boolean }) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const project = useProjectStore((state) => state.project);
   const getShotsSorted = useProjectStore((state) => state.getShotsSorted);
   const importProject = useProjectStore((state) => state.importProject);
@@ -150,7 +266,9 @@ export function ImportExportMenu({ block = false }: { block?: boolean }) {
     setShowMenu(false);
     try {
       const shots = getShotsSorted();
-      const blob = await buildStoryboardWorkbook(project, shots);
+      const blob = await buildStoryboardWorkbook(project, shots, {
+        brandLocale: language === 'en' ? 'en' : 'zh',
+      });
       await saveBlob(blob, `${project.name || 'storyboard'}.xlsx`);
     } catch (error) {
       console.error('导出 Excel 失败:', error);
@@ -193,6 +311,10 @@ export function ImportExportMenu({ block = false }: { block?: boolean }) {
 
       // 将 CSV 添加到 ZIP
       zip.file(`${project.name || 'storyboard'}.csv`, '\ufeff' + csv);
+      zip.file(
+        'README-Ingbord.txt',
+        exportBrandReadme(language === 'en' ? 'en' : 'zh')
+      );
 
       // 将所有图片添加到 ZIP
       for (const shot of shots) {
@@ -226,6 +348,10 @@ export function ImportExportMenu({ block = false }: { block?: boolean }) {
     try {
       const shots = getShotsSorted();
       const zip = new JSZip();
+      zip.file(
+        'README-Ingbord.txt',
+        exportBrandReadme(language === 'en' ? 'en' : 'zh')
+      );
 
       for (const shot of shots) {
         if (shot.image) {
@@ -410,9 +536,10 @@ export function ImportExportMenu({ block = false }: { block?: boolean }) {
       };
       
       const margin = 16;
-      const headerHeight = 18;
-      const footerHeight = 0;
+      const headerHeight = 22;
+      const footerHeight = 14;
       const gap = 4;
+      const brandLocale = language === 'en' ? 'en' : 'zh';
       
       // 计算可用区域
       const usableWidth = pageWidth - margin * 2;
@@ -492,15 +619,13 @@ export function ImportExportMenu({ block = false }: { block?: boolean }) {
           pdf.addImage(titleResult.imageData, 'PNG', margin, margin, titleWidthMm, titleHeightMm);
         }
         
-        // 绘制右上角文本（支持占位符 {page}，使用 Canvas 渲染中文）
-        const headerText = project.pdfHeaderText || t('settings.pdfHeaderText.placeholder');
+        // 右上角页码：随界面语言切换（默认「第 n 页」/「Page n」）
+        const headerText = resolvePdfPageHeaderText(project.pdfHeaderText, brandLocale);
         const headerTextWithPage = headerText.replace(/\{page\}/g, String(pageNum + 1));
         const headerResult = renderChineseTextToImage(headerTextWithPage, 14, { r: 63, g: 63, b: 70 });
         if (headerResult.imageData && headerResult.width > 0 && headerResult.height > 0) {
-          // 将像素转换为 mm（假设 96 DPI）
           const headerWidthMm = (headerResult.width / 96) * 25.4;
           const headerHeightMm = (headerResult.height / 96) * 25.4;
-          // 右对齐：从页面右边缘减去边距和图片宽度
           pdf.addImage(
             headerResult.imageData,
             'PNG',
@@ -624,6 +749,23 @@ export function ImportExportMenu({ block = false }: { block?: boolean }) {
             }
             
             shotIndex++;
+          }
+        }
+
+        try {
+          stampPdfBrand(pdf, pageWidth, pageHeight, renderChineseTextToImage, brandLocale);
+        } catch (brandError) {
+          console.error('PDF 品牌水印绘制失败:', brandError);
+          try {
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(10);
+            pdf.setTextColor(80, 80, 80);
+            pdf.text(EXPORT_BRAND.siteHost, margin, pageHeight - 6);
+            pdf.text(EXPORT_BRAND.siteHost, pageWidth - margin, pageHeight - 6, {
+              align: 'right',
+            });
+          } catch {
+            /* ignore */
           }
         }
 
