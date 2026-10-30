@@ -22,7 +22,7 @@
 
 ## 发行版（Release）
 
-可在仓库 [Releases](https://github.com/Miatoo/Ingbord/releases) 下载安装包。当前状态：
+可在仓库 [Releases]([https://github.com/Miatoo/Ingbord/releases](https://github.com/Miatoo/Ingbord/releases/tag/v1.0.1-beta)) 下载安装包。当前状态：
 
 | 平台 | 状态 |
 |------|------|
