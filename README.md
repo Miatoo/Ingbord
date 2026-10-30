@@ -1,137 +1,266 @@
+<div align="center">
+
 # Ingbord
 
-A professional storyboard / shot-list editor.
-<img width="2752" height="1536" alt="main-en" src="https://github.com/user-attachments/assets/2ee8e0ad-f5e9-4f7c-aecb-c2351a1c6998" />
+**Storyboards for people who can't draw.**
 
-**Live demo:** https://miatoo.github.io/Ingbord/
+Block the shot in 3D, generate the frame, annotate it, reorder the board, then export a shot list a producer can actually read.
 
-English · [中文](README-zh.md)
+[**▶ Open the web app**](https://miatoo.github.io/Ingbord/) · [Download](#install) · **English** · [中文](README-zh.md)
 
-Built for short-form and commercial boards, class scripts, practice boards, and indie production.
+</div>
+
+<img width="2752" height="1536" alt="Ingbord storyboard workspace" src="https://github.com/user-attachments/assets/2ee8e0ad-f5e9-4f7c-aecb-c2351a1c6998" />
+
+---
+
+## What this is
+
+Ingbord is a storyboard and shot-list editor that runs in your browser.
+
+It does not assume you can draw. Pose a 3D mannequin and a camera to block the shot, generate the frame, then add two arrows and a line of text on top. Or plug in your own image API and generate the frame directly. Order the shots, then export an Excel sheet and a PDF that the producer and the DP can work from.
+
+**It is not a drawing tool. It is a way to turn "how do we shoot this scene" into a document people can pass around.**
+
+Who it's for:
+
+| Situation | What you get out of it |
+|---|---|
+| **Short-form and vertical drama** | One person covering five jobs. The board stops being hand gestures across a table. |
+| **Commercials and pitch decks** | Hand over a PDF instead of a folder of loose images. Shot numbers, framing, camera moves and durations all line up. |
+| **Student films and shorts** | Lock every shot before the shoot day, so nobody reshoots on set. |
+| **Pre-vis and location scouting** | Check camera positions and screen direction in 3D before you find out on location that it doesn't cut together. |
+
+---
+
+## Quick start (nothing to install)
+
+1. Open **https://miatoo.github.io/Ingbord/**
+2. Add shots in **Board**, upload or replace frames
+3. Select a shot → switch to **3D Pose** to block the mannequin and camera → generate the frame → draw notes in **Annotation**
+4. Back in Board, drag to reorder → export Excel / PDF
+
+
+---
 
 ## Features
 
-| Feature | Description |
-|------|------|
-| **Board** | Manage shots, upload/replace images, drag to reorder, overview the sequence |
-| **3D Pose** | Pose 3D mannequins and cameras, then generate a shot sketch |
-| **Annotation** | Draw brushes, arrows, shapes, and text as visual notes |
-| **AI Image** | Configure your image API, then generate frames from prompts / references |
-| **Import / Export** | Project files (`.clapboard` / JSON), Excel, CSV, image ZIP, PDF |
-| **Local library** | Projects stay in the browser; keep editing after refresh |
+| Feature | What it does |
+|---|---|
+| **Board** | Manage every shot, upload or replace frames, drag to reorder, see the whole sequence at once |
+| **3D Pose** | Pose mannequins and cameras to set framing, shot size and screen direction; generate the shot in one click |
+| **Annotation** | Brush, line, rectangle, ellipse, arrow, text, fill; layers and undo/redo |
+| **AI Image** | Built-in channel (beta) **or** bring your own API. Prompt or reference based, with version history |
+| **Export** | Project files (`.clapboard` / JSON), Excel, CSV, image ZIP, PDF |
+| **Project library** | Projects stay in your browser and survive a refresh; manage several at once |
+| **Chinese + English UI, themes** | Switch language and theme from the top bar |
+
+### Inside 3D Pose
+
+- Mannequins: adult male and female, teen male and female, child, baby — with swappable hair, expressions and hand poses
+- Props and sets: chairs, tables, beds, doors, windows, vehicles, trees, lights; import your own `.glb` models too
+- Cameras: preset cameras and scene camera positions; orbit, pan and wheel-zoom
+- Editing: move, rotate and scale any selected object. **Generate shot image** writes straight into the current shot
+
+### Inside Annotation
+
+- Brush engine with pressure curve, brush presets and `.abr` import; brushes can be exported and reused
+- Layer management, undo and redo (`Ctrl+Z` / `Ctrl+Y`)
+- `Tab` collapses and restores the floating panels
+- Annotations are saved with the shot and composited into exports
+
+### Inside AI Image
+
+Two ways to generate:
+
+**1. Built-in channel (beta).** The hosted web app and the packaged desktop builds ship with a built-in image channel, so you can generate without setting up an API key first.
+
+> This channel is still in beta. Expect queues, rate limits, model changes and occasional interruption. **For real work, switch to bring-your-own-API — don't put a delivery deadline on a test channel.**
+
+**2. Bring your own API (recommended).** Enter your own endpoint, key and model. Billing goes straight to your model provider, never through me. Three common API shapes are detected automatically:
+
+| API style | Endpoint pattern |
+|---|---|
+| OpenAI-style | `/v1/images/generations`, `/v1/chat/completions` |
+| Gemini | `/v1beta/models/...:generateContent` |
+| Nano Banana | `/v1/draw/...` |
+
+Other OpenAI-compatible endpoints generally work as well. A single request can carry up to **3 character references and 3 scene references** alongside the current board frame, so you aren't charged for several separate jobs. Results can be saved as new versions and compared within the same shot.
+
+> Builds compiled from this repository include the bring-your-own-API path only. The built-in channel belongs to the official releases, so fill in the AI Image panel before generating from a local build.
 
 ---
 
-## Releases
+## Export — the part that actually ships
 
-Download packages from [Releases](https://github.com/Miatoo/Ingbord/releases/tag/v1.0.1-beta). 
-Current status:
+A board is only useful if it leaves the app.
 
-| Platform | Status |
-|------|------|
-| **Windows desktop** | Released |
-| **Android** | Released |
-| **macOS** | Planned |
-| **iOS** | Planned |
-| **Linux** | Planned |
+| Format | What it's for |
+|---|---|
+| **PDF** | Clients, pitch decks, printing for the wall (a small Ingbord credit sits at the page foot) |
+| **Excel** | Scheduling and budget for the producer; columns line up with a call sheet |
+| **CSV** | Feed another spreadsheet or your own stats |
+| **Image ZIP** | Grab every frame at once for Keynote or PowerPoint |
+| **Project file (`.clapboard` / JSON)** | Full backup; restores on another device or browser |
 
-You can also build the web app and host it statically (see below).
-
----
-
-## Quick start
-
-Requires Node.js 18+ (20 / 22 recommended).
-
-### Development
-
-```bash
-npm install
-npm run dev
-```
-
-Open the URL printed in the terminal (default `http://localhost:5173`).
-
-Messages like `vulnerabilities`, `looking for funding`, or `allow-scripts` after `npm install` are usually **warnings**, not failures. If you see `audited … packages` and can run `npm run dev` / `npm run build`, you are fine. Avoid `npm audit fix --force` (it can break dependency versions).
-
-### Production build / static hosting
-
-```bash
-npm install
-npm run build
-```
-
-Serve `dist/` with Nginx, Cloudflare Pages, etc. See [DEPLOY.md](DEPLOY.md).
+**Excel import is supported too**, so an existing shot list can be brought in and edited instead of retyped.
 
 ---
 
-## Four workspace views
+## Install
 
-### Board
+### Option 1 — Web app (simplest, recommended)
 
-Overview all shots; upload/replace images; drag to reorder; select a shot to edit properties.
+Open **https://miatoo.github.io/Ingbord/**. No account, no download.
 
-### 3D Pose
+### Option 2 — Standalone window (no installer)
 
-- **Orbit:** left-drag  
-- **Pan:** right- or middle-drag  
-- **Zoom:** scroll wheel  
-- Move / rotate / scale selected mannequins  
-- **Generate shot image** writes into the current shot  
-- Add characters from the library, or import custom models  
+In Edge: *Apps → Install this site as an app*. In Chrome: *More tools → Create shortcut*, tick *Open as window*.
 
-### Annotation
+You get a window without an address bar and an entry in the Start menu, which is close enough to a desktop app. **No installer involved.**
 
-Draw on the current frame: brush, line, rect, ellipse, arrow, text, fill, etc. Layers and undo/redo (Ctrl+Z / Ctrl+Y). **Tab** toggles floating panels. Annotations save with the shot and export together.
+### Option 3 — Native packages
 
-### AI Image
-<img width="1912" height="914" alt="aigenerate" src="https://github.com/user-attachments/assets/b1ddda74-e860-47de-b50c-814069b71386" />
+Download from [Releases](https://github.com/Miatoo/Ingbord/releases). Current version: **v1.0.1-beta**.
 
-1. Configure **endpoint, API key, model**.  
-2. Select a shot (with a base image if needed), enter a prompt; optional character/scene references.  
-3. **Generate**, then **save as a new version** and switch versions as needed.
+| Platform | File | Size |
+|---|---|---|
+| Windows x64 (recommended) | `Ingbord-Setup-1.0.1-beta-x64.zip` | 90 MB |
+| Windows ia32 | `Ingbord-Setup-1.0.1-beta-ia32.zip` | 85 MB |
+| Windows portable x64 | `Ingbord-Portable-1.0.1-beta-x64.zip` | 90 MB |
+| Windows portable ia32 | `Ingbord-Portable-1.0.1-beta-ia32.zip` | 85 MB |
+| Android (test build) | `Ingbord-1.0.1-beta-debug.apk` | 25 MB |
+
+> The Windows archives contain a `.exe` — **unzip first**. The portable builds run without installing and don't touch the registry.
+
+#### One small note for first launch
+
+Independently built open-source projects usually don't have a code-signing certificate, so Windows may show a blue prompt the first time you run the installer. It takes two clicks:
+
+1. **More info**
+2. **Run anyway**
+
+That's it — it won't come back. This is Windows' default behaviour for any executable without a signing certificate, and it says nothing about whether the software is safe.
+
+> Don't want to see it at all? Use the web app, or install it as a standalone window (Option 2). Identical feature set.
+
+<details>
+<summary>Want to verify the download? (optional)</summary>
+
+SHA-256 for each file:
+
+| File | SHA-256 |
+|---|---|
+| `Ingbord-Setup-1.0.1-beta-x64.zip` | `2dfca07e3a789ce69dec5d71b77b16b958eb098a1abf24f715b578e749d68377` |
+| `Ingbord-Setup-1.0.1-beta-ia32.zip` | `ca71d1431f9d46fea515bf90f1fba1a8a1083af3ea41dba6532445b46572e701` |
+| `Ingbord-Portable-1.0.1-beta-x64.zip` | `59b69ce9cac623678bf4df52038e5a59971add7cb2ba139ae09e4efce228eed8` |
+| `Ingbord-Portable-1.0.1-beta-ia32.zip` | `8a72b84a3b6d89750add49d28c0b5be754b9bb2a8160f5b18a31253827d28ad9` |
+| `Ingbord-1.0.1-beta-debug.apk` | `d447dffd687e5edec3955179614bef5db377dc08061974c559a47d0cd5054fcf` |
+
+On Windows: `certutil -hashfile <file> SHA256`
+On macOS / Linux: `shasum -a 256 <file>`
+
+</details>
 
 ---
 
-## Settings and more
+## Where your data lives
 
-- **Aspect ratio / safe frame / PDF header** — settings or metadata entries  
-- **Theme / language** — top bar  
-- **Shortcuts** — open the shortcut list from the top bar  
+**Everything stays in your browser's local storage. Nothing is uploaded, no account is needed.** Once the page has loaded you can keep editing with the network down — except AI generation, which needs a connection.
+
+Two consequences worth knowing:
+
+- Good: no cloud exposure, and you can keep working offline.
+- Careful: another computer, another browser, or clearing site data means your local projects won't be there. **Export a `.clapboard` project file for anything that matters** — that is currently the only way to move work between devices.
+
+With bring-your-own-API, your key is stored locally and never sent anywhere except your provider. The built-in channel doesn't ask for a key at all.
 
 ---
 
 ## FAQ
 
-**Will I lose data?**  
-Projects live in the browser by default. Another machine, cleared cache, or another browser will not see them — export a project file for backup.
+**Do I need to sign up?**
+No. Open it and work.
 
-**How do I use AI Image?**  
-Enter your image API endpoint, key, and model name in the AI Image panel.
+**Do I need to be able to draw?**
+No. 3D posing, AI generation and annotation are three separate ways to get a frame. If you can use a mouse, you can use this.
 
-**Models under `public/models`?**  
-If any assets are restricted, replace them with freely usable ones before redistribution.
+**Can I use it commercially?**
+Ingbord itself is licensed CC BY-NC-SA 4.0 — **free to use, modify and redistribute for non-commercial purposes**. For commercial use (client work at a company, paid services), contact the author for a license. **Boards you create with Ingbord are entirely yours and are not affected by this.**
+
+**Do I have to have my own API for AI generation?**
+Not necessarily. The web app and the desktop builds include a built-in channel you can try immediately, but **it is still in beta** and may queue, rate-limit or drop out. For steady output and batch work, use your own key — OpenAI-style, Gemini and Nano Banana endpoints are all supported, billed directly by your provider.
+
+**Will the built-in channel stay free?**
+Terms may change during the beta, and no quota, speed or uptime is promised. Treat it as a trial entry point, not a production tool.
+
+**Is bring-your-own-API more expensive?**
+Pricing is whatever your provider charges. Ingbord adds no markup and takes no cut. You can also draft with a cheap model and re-render the keepers on a better one.
+
+**Which languages does the UI support?**
+Chinese and English, switchable from the top bar.
+
+**macOS or iOS builds?**
+Not packaged yet. The web app runs in any browser on any OS, and on macOS you can install it as a standalone window from Edge.
+
+**Found a bug, or want a feature?**
+Open an [issue](https://github.com/Miatoo/Ingbord/issues) with your OS, browser version and reproduction steps. It'll be seen.
 
 ---
 
-## One-line summary
+## Build locally
 
-**New shots → Board upload (or 3D / Annotation / AI) → notes on the right → drag to order → export PDF / ZIP / Excel / project file.**
+Node.js 18+ required (20 / 22 recommended).
 
-Deployment notes: [DEPLOY.md](DEPLOY.md).
+```bash
+npm install
+npm run dev      # dev server at http://localhost:5173
+npm run build    # static output in dist/
+```
+
+`dist/` is plain static files — Nginx, Cloudflare Pages, Vercel or GitHub Pages all work. See [DEPLOY.md](DEPLOY.md) for deployment notes.
+
+> Warnings like `vulnerabilities` or `looking for funding` after `npm install` are usually **warnings, not failures**. If you see `audited … packages` and `npm run dev` starts, you're fine. **Don't run `npm audit fix --force`** — it reshuffles dependency versions and breaks the build.
+
+Stack: React 18, TypeScript, Vite, Zustand, Three.js, Tailwind CSS.
+
+---
+
+## Roadmap
+
+- [ ] Cloud backup for project files (today it's local export only)
+- [ ] Batch printing and pagination control for board pages
+- [ ] More built-in sets and props
+- [ ] macOS packaging
+
+No dates promised, but this reflects priority. If you need something badly, open an issue and describe the situation — a concrete scenario moves things more than a vote.
+
+---
+
+## Feedback
+
+- Bugs and requests: [GitHub Issues](https://github.com/Miatoo/Ingbord/issues)
+- Chat: Telegram https://t.me/+7AU5WrfdDZtlMTll
+- Author: [@Miatoo](https://github.com/Miatoo)
+
+If Ingbord saves you a drawing session, a ⭐ helps more than it looks — it's how the next person searching for a storyboard tool finds this.
 
 ---
 
 ## License
 
-**The entire repository** (source, docs, and config) is released under one license: [**CC BY-NC-SA 4.0**](LICENSE).  
-You may share and adapt it freely for **non-commercial** use, provided **attribution** is retained and adaptations are shared alike.
+Everything in this repository (source, docs, config) is under [**CC BY-NC-SA 4.0**](LICENSE).
 
 | | |
 |---|---|
-| **Permissions** | Share and adapt (non-commercial) |
-| **Conditions** | Attribution; ShareAlike |
-| **Limitations** | NonCommercial; no warranty |
+| **Permitted** | Share and adapt for non-commercial purposes |
+| **Conditions** | Attribution; adaptations shared under the same license |
+| **Limitations** | No commercial use; no warranty |
 
-Full text: [LICENSE](LICENSE).  
-Telegram: https://t.me/+7AU5WrfdDZtlMTll · [Repository](https://github.com/Miatoo/Ingbord)
+Full text: [LICENSE](LICENSE). For commercial licensing, contact the author.
+
+**Work you create with Ingbord belongs entirely to you.** The license covers the software, not your boards.
+
+---
+
+[中文版 README →](README-zh.md)
