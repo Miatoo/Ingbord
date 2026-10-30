@@ -24,7 +24,8 @@ Built for short-form and commercial boards, class scripts, practice boards, and 
 
 ## Releases
 
-Download packages from [Releases](https://github.com/Miatoo/Ingbord/releases). Current status:
+Download packages from [Releases](https://github.com/Miatoo/Ingbord/releases/tag/v1.0.1-beta). 
+Current status:
 
 | Platform | Status |
 |------|------|
