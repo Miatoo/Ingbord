@@ -4,7 +4,7 @@
 
 **Storyboards for people who can't draw.**
 
-Block the shot in 3D, generate the frame, annotate it, reorder the board, then export a shot list a producer can actually read.
+Block the shot with 3D mannequins or generate it with your own image API, annotate it, reorder the board, export Excel or PDF.
 
 [**▶ Open the web app**](https://miatoo.github.io/Ingbord/) · [Download](#install) · **English** · [中文](README-zh.md)
 
@@ -16,20 +16,20 @@ Block the shot in 3D, generate the frame, annotate it, reorder the board, then e
 
 ## What this is
 
-Ingbord is a storyboard and shot-list editor that runs in your browser.
+Ingbord is a storyboard and shot-list editor that runs in your browser. Open the page and it works — nothing to install.
 
-It does not assume you can draw. Pose a 3D mannequin and a camera to block the shot, generate the frame, then add two arrows and a line of text on top. Or plug in your own image API and generate the frame directly. Order the shots, then export an Excel sheet and a PDF that the producer and the DP can work from.
+It does not assume you can draw. Frames come from two places: pose 3D mannequins and cameras and capture the result, or fill in your own image API in settings and generate from a prompt. Either way you can draw arrows and notes on top, reorder the shots, and export Excel or PDF.
 
-**It is not a drawing tool. It is a way to turn "how do we shoot this scene" into a document people can pass around.**
+What you export is a shot list: each shot has a number, a frame, shot size, action and notes, ready to hand to the camera operator, editor or producer.
 
-Who it's for:
+Where people tend to use it:
 
-| Situation | What you get out of it |
+| Situation | Description |
 |---|---|
-| **Short-form and vertical drama** | One person covering five jobs. The board stops being hand gestures across a table. |
-| **Commercials and pitch decks** | Hand over a PDF instead of a folder of loose images. Shot numbers, framing, camera moves and durations all line up. |
-| **Student films and shorts** | Lock every shot before the shoot day, so nobody reshoots on set. |
-| **Pre-vis and location scouting** | Check camera positions and screen direction in 3D before you find out on location that it doesn't cut together. |
+| **Short drama and short-form** | Lock the shots before the shoot day and hand a list to camera and editing |
+| **Commercials and pitches** | Explain each shot in a PDF instead of a folder of loose images |
+| **Student films and shorts** | Finish a board without learning to draw first |
+| **Pre-vis** | Check camera position, framing and screen direction in 3D |
 
 ---
 
@@ -91,9 +91,9 @@ Other OpenAI-compatible endpoints generally work as well. A single request can c
 
 ---
 
-## Export — the part that actually ships
+## Export
 
-A board is only useful if it leaves the app.
+A board is only useful if it leaves the app. Current formats:
 
 | Format | What it's for |
 |---|---|
@@ -183,7 +183,7 @@ With bring-your-own-API, your key is stored locally and never sent anywhere exce
 No. Open it and work.
 
 **Do I need to be able to draw?**
-No. 3D posing, AI generation and annotation are three separate ways to get a frame. If you can use a mouse, you can use this.
+No. Frames can come from 3D posing, from an image API, or from drawing on top of an existing image.
 
 **Can I use it commercially?**
 Ingbord itself is licensed CC BY-NC-SA 4.0 — **free to use, modify and redistribute for non-commercial purposes**. For commercial use (client work at a company, paid services), contact the author for a license. **Boards you create with Ingbord are entirely yours and are not affected by this.**
@@ -243,7 +243,7 @@ No dates promised, but this reflects priority. If you need something badly, open
 - Chat: Telegram https://t.me/+7AU5WrfdDZtlMTll
 - Author: [@Miatoo](https://github.com/Miatoo)
 
-If Ingbord saves you a drawing session, a ⭐ helps more than it looks — it's how the next person searching for a storyboard tool finds this.
+If Ingbord is useful to you, a ⭐ is enough.
 
 ---
 
