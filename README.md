@@ -28,8 +28,8 @@ Download packages from [Releases](https://github.com/Miatoo/Ingbord/releases). C
 
 | Platform | Status |
 |------|------|
-| **Windows desktop** | Coming soon |
-| **Android** | Coming soon |
+| **Windows desktop** | Released |
+| **Android** | Released |
 | **macOS** | Planned |
 | **iOS** | Planned |
 | **Linux** | Planned |
